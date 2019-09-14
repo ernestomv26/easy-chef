@@ -13,9 +13,9 @@ app.use('/', router);
 
 
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-});
+// app.get('/', (req, res) => {
+//   res.sendFile(__dirname + '/index.html');
+// });
 
 
 var pool = mysql.createPool({
@@ -27,15 +27,10 @@ var pool = mysql.createPool({
   debug    : true
 });
 
-// pool.query('SELECT * from recipe', function(err, rows) {
-//   if (!err)
-//     console.log('The solution is: ', rows);
-//   else
-//     console.log('Error while performing Query.');
-// });
-
 function handle_database(req,res) {
-    
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
   pool.getConnection(function(err,connection){
     if (err) {
       res.json({"code" : 100, "status" : "Error in connection database"});
@@ -48,6 +43,7 @@ function handle_database(req,res) {
     pool.query("SELECT * from recipe WHERE recipe = '" + req.body["query"] +  "';",function(err,rows){
     connection.release();
     if(!err) {
+      console.log(rows);
       res.json(rows);
     }           
     });
@@ -59,18 +55,7 @@ function handle_database(req,res) {
   });
 }
 
-// app.get('/submitRecipe', function(request, response) {
-//   console.log("SELECT * from recipe WHERE recipe = '"+request.body.query+"';");
-//   pool.getConnection()
-//   connection.query("SELECT * from recipe WHERE recipe = '"+request.body.query+"';", function(err, rows) {
-//     if (!err)
-//       console.log('The solution is: ', rows);
-//     else
-//       console.log('Error while performing Query.');
-//   });
-// });
-
-app.post("/submitRecipe", function(req, res){-
+app.post("/submitRecipe", function(req, res){
   handle_database(req,res);
 });
   
