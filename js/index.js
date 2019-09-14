@@ -23,11 +23,38 @@ app.use('/', router);
 var pool = mysql.createPool({
   connectionLimit : 100,
   host     : '127.0.0.1',
-  user     : 'user2',
-  password : 'the',
+  user     : 'root',
+  password : 'password',
   database : 'hackathon',
   debug    : false
 });
+
+// function handle_database(req,res) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+//   pool.getConnection(function(err,connection){
+//     if (err) {
+//       res.json({"code" : 100, "status" : "Error in connection database"});
+//       return;
+//     }   
+
+//     console.log('connected as id ' + connection.threadId);
+  
+//     pool.query("SELECT must from test WHERE recipe = '" + req.body["query"] +  "';",function(err,rows){
+//     connection.release();
+//     if(!err) {
+      
+//       res.json(rows);
+//     }           
+//     });
+
+//     connection.on('error', function(err) {      
+//       res.json({"code" : 100, "status" : "Error in connection database"});
+//       return;     
+//     });
+//   });
+// }
 
 function handle_database(req,res) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -41,12 +68,45 @@ function handle_database(req,res) {
 
     console.log('connected as id ' + connection.threadId);
   
-    console.log(req.body);
-    pool.query("SELECT * from recipe WHERE recipe = '" + req.body["query"] +  "';",function(err,rows){
+    pool.query("INSERT INTO `fridge` VALUES ('" + req.body["query"] +  "');",function(err,rows){
     connection.release();
     if(!err) {
-      console.log(rows);
       res.json(rows);
+    }           
+    else {
+      console.log(err)
+    }
+    });
+
+    connection.on('error', function(err) {      
+      res.json({"code" : 100, "status" : "Error in connection database"});
+      return;     
+    });
+  });
+}
+
+
+app.post("/submitRecipe", function(req, res){
+  handle_database(req,res);
+});
+
+function handle_database1(req,res) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+  pool.getConnection(function(err,connection){
+    if (err) {
+      res.json({"code" : 100, "status" : "Error in connection database"});
+      return;
+    }   
+
+    console.log('connected as id ' + connection.threadId);
+  
+    pool.query("select distinct(meal) from recipes as t where t.meal not in (select meal as r from recipes where ingredient not in (select ingredient from fridge));",function(err,rows1){
+    connection.release();
+    console.log(rows1)
+    if(!err) {
+      res.json(rows1);
     }           
     });
 
@@ -57,8 +117,8 @@ function handle_database(req,res) {
   });
 }
 
-app.post("/submitRecipe", function(req, res){
-  handle_database(req,res);
+app.get("/getRecipe", function(req, res){
+  handle_database1(req,res);
 });
   
 app.listen(8080, () => {
