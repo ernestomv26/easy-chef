@@ -15,11 +15,6 @@ app.use('/', router);
 
 
 
-// app.get('/', (req, res) => {
-//   res.sendFile(__dirname + '/index.html');
-// });
-
-
 var pool = mysql.createPool({
   connectionLimit : 100,
   host     : '127.0.0.1',
@@ -28,6 +23,20 @@ var pool = mysql.createPool({
   database : 'hackathon',
   debug    : false
 });
+
+pool.getConnection(function(err,connection){
+  if (err) {
+    res.json({"code" : 100, "status" : "Error in connection database"});
+    return;
+  }
+  pool.query("CREATE TABLE IF NOT EXISTS fridge(ingredient varchar(255) NOT NULL);",function(err,rows){
+    connection.release();
+    if(!err) {
+      console.log(rows);
+    }           
+    });
+}   
+)
 
 function handle_database(req,res) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -42,11 +51,10 @@ function handle_database(req,res) {
     console.log('connected as id ' + connection.threadId);
   
     console.log(req.body);
-    pool.query("SELECT * from recipe WHERE recipe = '" + req.body["query"] +  "';",function(err,rows){
+    pool.query("INSERT into fridge(ingredient) VALUES('" + req.body["query"] +  "');",function(err,rows){
     connection.release();
     if(!err) {
       console.log(rows);
-      res.json(rows);
     }           
     });
 

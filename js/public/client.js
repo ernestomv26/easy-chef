@@ -7,8 +7,7 @@ button.addEventListener('click',function queryRecipes() {
   userRequest.onreadystatechange = function() {
     if (userRequest.readyState == XMLHttpRequest.DONE) {
        console.log(userRequest.responseText);
-       var res = JSON.parse(userRequest.responseText);
-       console.log(res['0'].need)
+       //var res = JSON.parse(userRequest.responseText);
     }
   }
   userRequest.open('post', '/submitRecipe');
