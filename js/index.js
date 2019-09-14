@@ -6,6 +6,8 @@ const app = express();
 var jsonParser = bodyParser.json();
 //starting express server and loading the front page
 app.use(express.static('public'));
+app.use(express.static('public/documentation'));
+
 app.use(jsonParser);
 app.use(bodyParser.urlencoded({ extended: false }));
 var router = express.Router();
@@ -21,10 +23,10 @@ app.use('/', router);
 var pool = mysql.createPool({
   connectionLimit : 100,
   host     : '127.0.0.1',
-  user     : 'root',
-  password : 'password',
+  user     : 'user2',
+  password : 'the',
   database : 'hackathon',
-  debug    : true
+  debug    : false
 });
 
 function handle_database(req,res) {
