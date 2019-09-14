@@ -25,9 +25,13 @@ button1.addEventListener('click',function queryRecipes() {
   userRequest.onreadystatechange = function() {
     if (userRequest.readyState == XMLHttpRequest.DONE) {
        console.log(userRequest.responseText);
+<<<<<<< HEAD
        var res = JSON.parse(userRequest.responseText);
        document.getElementById("available").innerHTML = userRequest.responseText;
        console.log(res)
+=======
+       //var res = JSON.parse(userRequest.responseText);
+>>>>>>> 69bfabc2679e51d69732ab98baaba24e2a291b7c
     }
   }
   userRequest.open('get', '/getRecipe');
