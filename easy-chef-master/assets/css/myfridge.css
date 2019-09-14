@@ -183,3 +183,7 @@ body>.navbar-collapse[data-color="red"]:after {
     background-size: 150% 150%;
 }
 
+.row {
+    padding-left: 250px;
+}
+
